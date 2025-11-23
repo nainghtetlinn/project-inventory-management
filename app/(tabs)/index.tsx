@@ -132,7 +132,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
     paddingTop: 60,
-    backgroundColor: "#f5f5f5",
   },
   header: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
   inputContainer: { flexDirection: "row", marginBottom: 20, gap: 10 },

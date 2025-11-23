@@ -18,7 +18,11 @@ export default function RootLayout() {
       databaseName="inventory.db"
       onInit={initializeDB}
     >
-      <Stack />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
     </SQLiteProvider>
   );
 }
