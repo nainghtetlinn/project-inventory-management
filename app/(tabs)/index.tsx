@@ -10,31 +10,22 @@ import {
   View,
 } from "react-native";
 
-// 1. Define the Interface for your data
-interface InventoryItem {
-  id: number;
-  name: string;
-  quantity: number;
-}
+import { InventoryItem } from "@/types/inventory-item";
 
 export default function InventoryScreen() {
-  const db = useSQLiteContext(); // Get DB access from the Provider
+  const db = useSQLiteContext();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [newItemName, setNewItemName] = useState<string>("");
 
-  // 2. READ: Function to fetch data
   const fetchItems = async () => {
-    // <InventoryItem> tells TS what the result looks like
     const result = await db.getAllAsync<InventoryItem>("SELECT * FROM items");
     setItems(result);
   };
 
-  // Initial fetch on mount
   useEffect(() => {
     fetchItems();
   }, []);
 
-  // 3. CREATE: Add Item
   const addItem = async () => {
     if (!newItemName.trim()) return;
 
@@ -44,14 +35,13 @@ export default function InventoryScreen() {
         newItemName,
         1
       );
-      await fetchItems(); // Refresh list
+      await fetchItems();
       setNewItemName("");
     } catch (error) {
       console.error("Error adding item:", error);
     }
   };
 
-  // 4. UPDATE: Increment Quantity
   const incrementQty = async (id: number, currentQty: number) => {
     try {
       await db.runAsync(
@@ -65,13 +55,20 @@ export default function InventoryScreen() {
     }
   };
 
-  // 5. DELETE: Remove Item
-  const deleteItem = async (id: number) => {
+  const decrementQty = async (id: number, currentQty: number) => {
     try {
-      await db.runAsync("DELETE FROM items WHERE id = ?", id);
+      if (currentQty > 1) {
+        await db.runAsync(
+          "UPDATE items SET quantity = ? WHERE id = ?",
+          currentQty - 1,
+          id
+        );
+      } else {
+        await db.runAsync("DELETE FROM items WHERE id = ?", id);
+      }
       await fetchItems();
     } catch (error) {
-      console.error("Error deleting item:", error);
+      console.error("Error updating item:", error);
     }
   };
 
@@ -107,17 +104,16 @@ export default function InventoryScreen() {
 
             <View style={styles.actions}>
               <TouchableOpacity
-                style={[styles.btn, styles.btnBlue]}
+                style={[styles.btn]}
+                onPress={() => decrementQty(item.id, item.quantity)}
+              >
+                <Text style={styles.btnText}>-</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn]}
                 onPress={() => incrementQty(item.id, item.quantity)}
               >
                 <Text style={styles.btnText}>+</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[styles.btn, styles.btnRed]}
-                onPress={() => deleteItem(item.id)}
-              >
-                <Text style={styles.btnText}>Del</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -161,7 +157,5 @@ const styles = StyleSheet.create({
   itemQty: { fontSize: 14, color: "#666", marginTop: 4 },
   actions: { flexDirection: "row", gap: 10 },
   btn: { paddingHorizontal: 15, paddingVertical: 8, borderRadius: 6 },
-  btnBlue: { backgroundColor: "#007AFF" },
-  btnRed: { backgroundColor: "#FF3B30" },
   btnText: { color: "white", fontWeight: "bold" },
 });
