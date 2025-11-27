@@ -83,7 +83,10 @@ export default function InventoryScreen() {
           onChangeText={setNewItemName}
         />
 
-        <TouchableOpacity style={styles.addBtn}>
+        <TouchableOpacity
+          style={styles.addBtn}
+          onPress={addItem}
+        >
           <Text style={styles.addBtnText}>Add Item</Text>
         </TouchableOpacity>
       </View>
