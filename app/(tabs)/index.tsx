@@ -1,7 +1,6 @@
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useEffect, useState } from "react";
 import {
-  Button,
   FlatList,
   StyleSheet,
   Text,
@@ -10,6 +9,7 @@ import {
   View,
 } from "react-native";
 
+import { THEMES } from "@/constants/theme";
 import { InventoryItem } from "@/types/inventory-item";
 
 export default function InventoryScreen() {
@@ -74,8 +74,6 @@ export default function InventoryScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Warehouse</Text>
-
       {/* Input Section */}
       <View style={styles.inputContainer}>
         <TextInput
@@ -84,10 +82,10 @@ export default function InventoryScreen() {
           value={newItemName}
           onChangeText={setNewItemName}
         />
-        <Button
-          title="Add Item"
-          onPress={addItem}
-        />
+
+        <TouchableOpacity style={styles.addBtn}>
+          <Text style={styles.addBtnText}>Add Item</Text>
+        </TouchableOpacity>
       </View>
 
       {/* List Section */}
@@ -129,33 +127,53 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: 60,
   },
-  header: { fontSize: 24, fontWeight: "bold", marginBottom: 20 },
   inputContainer: { flexDirection: "row", marginBottom: 20, gap: 10 },
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#fff",
+    borderColor: THEMES.border.color,
+    backgroundColor: THEMES.background,
     padding: 10,
     borderRadius: 8,
+  },
+  addBtn: {
+    backgroundColor: THEMES.button.background,
+    padding: 8,
+    borderRadius: 8,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  addBtnText: {
+    color: THEMES.button.foreground,
   },
   listContent: { paddingBottom: 50 },
   card: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: THEMES.background,
     padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
+    marginBottom: 16,
+    borderRadius: 8,
+    borderWidth: THEMES.border.width,
+    borderColor: THEMES.border.color,
   },
   itemName: { fontSize: 18, fontWeight: "600" },
   itemQty: { fontSize: 14, color: "#666", marginTop: 4 },
   actions: { flexDirection: "row", gap: 10 },
-  btn: { paddingHorizontal: 15, paddingVertical: 8, borderRadius: 6 },
-  btnText: { color: "white", fontWeight: "bold" },
+  btn: {
+    width: 36,
+    height: 36,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: THEMES.border.radius,
+    backgroundColor: THEMES.secondary.background,
+  },
+  btnText: {
+    color: THEMES.secondary.paragraph,
+    fontWeight: "bold",
+    fontSize: 20,
+  },
 });

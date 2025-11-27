@@ -38,5 +38,7 @@ export const THEMES = {
   },
   border: {
     radius: 1000,
+    color: COLORS.FOREST_BLUE,
+    width: 1,
   },
 };
